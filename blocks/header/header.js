@@ -8,6 +8,8 @@ import {
   decorateLinkedPictures,
 } from '../../scripts/scripts.js';
 
+import { initGigya } from '../../scripts/delayed.js';
+
 /**
  * collapses all open nav sections
  * @param {Element} sections The container element
@@ -58,9 +60,11 @@ function setupUser(section) {
       </button>`;
   } else {
     section.innerHTML = `<button id="nav-user-button" class="nav-user-button" data-status="loading">
-        ${icon.outerHTML}<span class="icon icon-spinner"></span><span>${text}</span>
+        ${icon.outerHTML}<span>${text}</span>
       </button>`;
   }
+  const button = section.querySelector('button');
+  button.addEventListener('click', initGigya);
 }
 
 function parseCountdown(ms) {
@@ -190,7 +194,7 @@ export default async function decorate(block) {
     }
     if (data.hasChildNodes()) statusBar.append(data);
 
-    const brand = nav.querySelector('.nav-brand')
+    const brand = nav.querySelector('.nav-brand');
     const sectionMeta = brand.querySelector('.section-metadata');
     if (sectionMeta) {
       const meta = readBlockConfig(sectionMeta);

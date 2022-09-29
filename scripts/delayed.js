@@ -1,9 +1,10 @@
 // eslint-disable-next-line import/no-cycle
-import { decorateIcons, sampleRUM } from './scripts.js';
+import { decorateIcons, fetchPlaceholders, sampleRUM } from './scripts.js';
 
-const isProd = window.location.hostname.endsWith('theplayers.com');
+const placeholders = await fetchPlaceholders();
+const isProd = window.location.hostname.endsWith(placeholders.hostname);
 
-if (!isProd) {
+if (!isProd === 'this') {
   // temporary override for analytics testing
   if (!localStorage.getItem('OptIn_PreviousPermissions')) localStorage.setItem('OptIn_PreviousPermissions', '{"aa":true,"mediaaa":true,"target":true,"ecid":true,"adcloud":true,"aam":true,"campaign":true,"livefyre":false}');
 }
@@ -44,8 +45,8 @@ const pageType = window.location.pathname === '/' ? 'homePage' : 'contentPage';
 const pname = window.location.pathname.split('/').pop();
 window.pgatour.Omniture = {
   properties: {
-    pageName: `pgatour:the-players-championship:${pname}`,
-    eVar16: `pgatour:the-players-championship:${pname}`,
+    pageName: `pgatour:tournaments:the-players-championship:${pname}`,
+    eVar16: `pgatour:tournaments:the-players-championship:${pname}`,
     prop18: pageType,
     eVar1: 'pgatour',
     prop1: 'pgatour',
@@ -53,13 +54,15 @@ window.pgatour.Omniture = {
     eVar2: 'r011',
     eVar6: window.location.href,
   },
-  defineOmnitureVars: () => {},
+  defineOmnitureVars: () => {
+    if (window.s) {
+      Object.assign(window.s, window.pgatour.Omniture.properties);
+    }
+  },
 
 };
 
 window.pgatour.docWrite = document.write.bind(document);
-
-loadScript(`https://assets.adobedtm.com/d17bac9530d5/90b3c70cfef1/launch-1ca88359b76c${isProd ? '.min' : ''}.js`);
 
 /* setup favorite players */
 function alphabetize(a, b) {
@@ -443,7 +446,10 @@ function setupGigya() {
   gigya.accounts.session.verify({ callback: checkIfLoggedIn });
 }
 
-function initGigya() {
+// eslint-disable-next-line import/prefer-default-export
+export function initGigya() {
+  const button = document.getElementById('nav-user-button');
+  if (button) button.removeEventListener('click', initGigya);
   loadScript(
     'https://cdns.gigya.com/JS/socialize.js?apikey=3__4H034SWkmoUfkZ_ikv8tqNIaTA0UIwoX5rsEk96Ebk5vkojWtKRZixx60tZZdob',
     setupGigya,
@@ -458,7 +464,7 @@ async function populateStatusBar(statusBar) {
     const statusBarData = document.querySelector('.status-bar-data');
     // fetch weather
     try {
-      const resp = await fetch('https://www.pgatour.com/bin/data/feeds/weather.json/r011');
+      const resp = await fetch('https://little-forest-58aa.david8603.workers.dev/?url=https://www.pgatour.com/bin/data/feeds/weather.json/r011');
       const { current_observation: weatherData } = await resp.json();
       const location = weatherData.display_location.full;
       const icon = weatherData.icon_url.replace('.gif', '.png');
@@ -496,23 +502,40 @@ function getCookie(cookieName) {
   return null;
 }
 
-async function setGeoCookies() {
-  try {
-    const resp = await fetch('https://geolocation.onetrust.com/cookieconsentpub/v1/geo/location');
-    if (resp.ok) {
-      const text = await resp.text();
-      const json = JSON.parse(text.replace('jsonFeed(', '').replace('"});', '"}'));
-      Object.keys(json).forEach((key) => {
-        const cookieName = `PGAT_${key.charAt(0).toUpperCase() + key.slice(1)}`;
-        const cookie = getCookie(cookieName);
-        if (!cookie || cookie !== json[key]) document.cookie = `${cookieName}=${json[key]}`;
-      });
-    }
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Setting geo cookies failed', error);
-  }
-}
+async function OptanonWrapper() {
+  const geoInfo = window.Optanon.getGeolocationData();
+  Object.keys(geoInfo).forEach((key) => {
+    const cookieName = `PGAT_${key.charAt(0).toUpperCase() + key.slice(1)}`;
+    const cookie = getCookie(cookieName);
+    if (!cookie || cookie !== geoInfo[key]) document.cookie = `${cookieName}=${geoInfo[key]}`;
+  });
 
-const cookieScript = loadScript('https://cdn.cookielaw.org/scripttemplates/otSDKStub.js', setGeoCookies);
+  const OneTrustActiveGroup = () => {
+    /* eslint-disable */
+    var y = true, n = false;
+    var y_y_y = {'aa': y, 'aam': y, 'ecid': y};
+    var n_n_n = {'aa': n, 'aam': n, 'ecid': n};
+    var y_n_y = {'aa': y, 'aam': n, 'ecid': y};
+    var n_y_y = {'aa': n, 'aam': y, 'ecid': y};
+    
+    if (typeof OnetrustActiveGroups != 'undefined')
+      if (OnetrustActiveGroups.includes(',C0002,'))
+        return OnetrustActiveGroups.includes(',C0004,')?y_y_y:y_n_y;
+      else
+        return OnetrustActiveGroups.includes(',C0004,')?n_y_y:n_n_n;
+    
+    return geoInfo.country == 'US'?y_y_y:n_n_n;
+    /* eslint-enable */
+  };
+  if (!localStorage.getItem('OptIn_PreviousPermissions')) {
+    const adobeSettings = OneTrustActiveGroup();
+    adobeSettings.tempImplied = true;
+    localStorage.setItem('OptIn_PreviousPermissions', JSON.stringify(adobeSettings));
+  }
+
+  loadScript(`https://assets.adobedtm.com/d17bac9530d5/90b3c70cfef1/launch-1ca88359b76c${isProd ? '.min' : ''}.js`);
+}
+const cookieScript = loadScript('https://cdn.cookielaw.org/scripttemplates/otSDKStub.js');
 cookieScript.setAttribute('data-domain-script', `262c6c79-a114-41f0-9c07-52cb1fb7390c${isProd ? '' : '-test'}`);
+
+window.OptanonWrapper = OptanonWrapper;

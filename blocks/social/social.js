@@ -1,4 +1,4 @@
-import { readBlockConfig, decorateIcons } from '../../scripts/scripts.js';
+import { readBlockConfig, decorateIcons, fetchPlaceholders } from '../../scripts/scripts.js';
 
 const TWITTER_URL = 'https://twitter.com/';
 
@@ -93,6 +93,7 @@ function buildTwitterTile(tile, data) {
 export default async function decorate(block) {
   const config = readBlockConfig(block);
   block.textContent = '';
+  const placeholders = await fetchPlaceholders();
 
   const wrapper = document.createElement('ul');
 
@@ -101,7 +102,8 @@ export default async function decorate(block) {
   wrapper.append(profilesTile);
 
   // fetch social feed
-  const resp = await fetch('https://api.massrelevance.com/brgyan07p/tournament_r011.json');
+  const tournament = `${placeholders.tourCode}${placeholders.tournamentId}`;
+  const resp = await fetch(`https://api.massrelevance.com/brgyan07p/tournament_${tournament}.json`);
   if (resp.ok) {
     const feed = await resp.json();
     feed.forEach((item) => {

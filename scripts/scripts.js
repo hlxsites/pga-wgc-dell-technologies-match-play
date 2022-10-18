@@ -943,15 +943,25 @@ export async function decorateMain(main) {
 }
 
 /**
+ * checks is search param 'view' is set to 'app'
+ */
+
+function isAppView() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('view') === 'app';
+}
+
+/**
  * loads everything needed to get to LCP.
  */
 async function loadEager(doc) {
   decorateTemplateAndTheme();
+  if (isAppView()) document.querySelector('header').remove();
   const main = doc.querySelector('main');
   if (main) {
     await decorateMain(main);
     await waitForLCP();
-    loadHeader(doc.querySelector('header'));
+    if (!isAppView()) loadHeader(doc.querySelector('header'));
   }
 }
 
@@ -966,12 +976,12 @@ async function loadLazy(doc) {
   const element = hash ? main.querySelector(hash) : false;
   if (hash && element) element.scrollIntoView();
 
-  loadFooter(doc.querySelector('footer'));
+  if (!isAppView()) loadFooter(doc.querySelector('footer'));
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   addFavIcon(`${window.hlx.codeBasePath}/styles/favicon.ico`);
 
-  loadAds(doc);
+  if (!isAppView()) loadAds(doc);
 
   doc.querySelectorAll('div:not([class]):empty').forEach((empty) => empty.remove());
 }

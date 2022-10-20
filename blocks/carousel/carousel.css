@@ -1,5 +1,5 @@
 main .carousel-container {
-  --carousel-btn-primary-color: var(--color-white);
+  --carousel-btn-primary-color: var(--color-blue);
   --carousel-btn-secondary-color: var(--color-black);
   --carousel-btn-secondary-hover-color: var(--color-white);
   --carousel-course-bg-color: var(--color-black);

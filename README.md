@@ -3,6 +3,7 @@
 ## Environments
 - Preview: https://main--pga-wgc-dell-technologies-match-play--hlxsites.hlx.page/
 - Live: https://main--pga-wgc-dell-technologies-match-play--hlxsites.hlx.live/
+- Prod: https://www.dellmatchplay.com/
 
 ## Installation
 

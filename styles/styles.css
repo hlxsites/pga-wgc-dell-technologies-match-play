@@ -387,14 +387,17 @@ main .section.teaser-no-img {
   }
 }
 
+main .section.teaser p {
+  text-align: center;
+}
 
-main .section.teaser .default-content-wrapper > :first-child {
+main .section.teaser .default-content-wrapper > p:first-child {
   position: relative;
   font-size: var(--body-font-size-xl);
   text-align: center;
 }
 
-main .section.teaser .default-content-wrapper > :first-child em {
+main .section.teaser .default-content-wrapper > p:first-child em {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -404,8 +407,8 @@ main .section.teaser .default-content-wrapper > :first-child em {
   line-height: 1;
 }
 
-main .section.teaser .default-content-wrapper > :first-child em::before,
-main .section.teaser .default-content-wrapper > :first-child em::after {
+main .section.teaser .default-content-wrapper > p:first-child em::before,
+main .section.teaser .default-content-wrapper > p:first-child em::after {
   content: '';
   display: block;
   top: 6px;
@@ -416,12 +419,12 @@ main .section.teaser .default-content-wrapper > :first-child em::after {
 }
 
 @media (min-width: 700px) {
-  main .section.teaser .default-content-wrapper > :first-child {
-    font-size: var(--body-font-size-xxl);
+  main .section.teaser .default-content-wrapper > p:first-child {
+    font-size: var(--body-font-size-xs);
   }
 
-  main .section.teaser .default-content-wrapper > :first-child em::before,
-  main .section.teaser .default-content-wrapper > :first-child em::after {
+  main .section.teaser .default-content-wrapper > p:first-child em::before,
+  main .section.teaser .default-content-wrapper > p:first-child em::after {
     width: 70px;
   }
 }
@@ -438,10 +441,6 @@ main .section.teaser h2 {
   main .section.teaser h2 {
     font-size: var(--heading-font-size-l);
   }
-}
-
-main .section.teaser p {
-  text-align: center;
 }
 
 main .section.teaser .button-container {

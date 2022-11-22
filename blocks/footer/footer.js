@@ -103,7 +103,7 @@ export default async function decorate(block) {
 
     ribbon.append(wrapper);
 
-    setupCookieChoices(footer.querySelector('.footer-links'));
+    setupCookieChoices(footer.querySelector('.footer-nav'));
     setupSocialButtons(footer.querySelector('.footer-social'));
 
     block.append(footer);

@@ -37,7 +37,7 @@
 
   /* fonts */
   --body-font-family: 'Roboto Condensed', 'Roboto Condensed-fallback';
-  --heading-font-family: 'Roboto', 'Roboto-fallback';
+  --heading-font-family: 'Roboto', 'roboto-fallback';
   --fixed-font-family: 'Roboto Mono', menlo, consolas, 'Liberation Mono', monospace;
 
   /* body sizes */
@@ -76,7 +76,7 @@
 }
 
 @font-face {
-  font-family: 'roboto-fallback';
+  font-family: roboto-fallback;
   size-adjust: 100.06%;
   ascent-override: 93%;
   src: local('Arial');

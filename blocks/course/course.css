@@ -1,6 +1,6 @@
 main .course-container {
   --course-background-color: var(--color-blue);
-  --course-background-transparent-color: var(--color-blue-95);
+  --course-background-transparent-color: var(--color-blue-90);
   --course-border-color: var(--color-white);
   --course-buttons-background-color: var(--color-black-95);
   --course-button-color: var(--color-gray);
